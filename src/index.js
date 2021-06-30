@@ -3,6 +3,7 @@ const http = require('http')
 const express= require('express')
 const socketio= require('socket.io')
 const Filter= require('bad-words')
+const {generateMessage}= require('./utils/messages.js')
 
 
 const app = express()
@@ -20,8 +21,8 @@ io.on('connection',(socket)=>{
 	console.log("New Socket Connection")
 
 
-	socket.emit('message',"Welcome !!")
-	socket.broadcast.emit('message',"New User Has Joined")
+	socket.emit('message',generateMessage("Welcome !!"))
+	socket.broadcast.emit('message',generateMessage("New User Has Joined"))
 
 
 
@@ -33,7 +34,7 @@ io.on('connection',(socket)=>{
 			return callback("Profanity Not Allowed!")
 		}
 
-		io.emit('message',message)
+		io.emit('message',generateMessage(message))
 		callback()
 	})
 
@@ -47,7 +48,7 @@ io.on('connection',(socket)=>{
 
 
 	socket.on('disconnect',()=>{
-		io.emit('message',"A User Has Left")
+		io.emit('message',generateMessage("A User Has Left"))
 	})
 
 })
