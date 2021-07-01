@@ -7,4 +7,16 @@ const generateMessage = (text)=>{
 
 }
 
-module.exports={generateMessage}
+
+const generateLocationMessage=(url)=>{
+
+	return {
+		url,
+		createdAt: new Date().getTime()
+	}
+}
+
+module.exports={
+	generateMessage,
+	generateLocationMessage
+}
