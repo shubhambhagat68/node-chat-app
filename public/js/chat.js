@@ -31,7 +31,6 @@ socket.on('locationMessage',(message)=>{
 })
 
 
-
 $messageForm.addEventListener('submit', (e) => {
     e.preventDefault()
 
@@ -51,7 +50,6 @@ $messageForm.addEventListener('submit', (e) => {
         console.log('Message delivered!')
     })
 })
-
 
 
 $sendLocationButton.addEventListener('click', () => {
