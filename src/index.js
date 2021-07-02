@@ -22,8 +22,13 @@ io.on('connection',(socket)=>{
 	console.log("New Socket Connection")
 
 
-	socket.emit('message',generateMessage("Welcome !!"))
-	socket.broadcast.emit('message',generateMessage("New User Has Joined"))
+	socket.on('join',({username,room})=>{
+
+		socket.join(room)
+		socket.emit('message',generateMessage("Welcome !!"))
+		socket.broadcast.to(room).emit('message',generateMessage(`${username} Has Joined!`))
+
+	})
 
 
 
