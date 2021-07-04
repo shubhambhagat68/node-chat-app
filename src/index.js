@@ -3,7 +3,8 @@ const http = require('http')
 const express= require('express')
 const socketio= require('socket.io')
 const Filter= require('bad-words')
-const {generateMessage,generateLocationMessage}= require('./utils/messages.js')
+const {generateMessage,generateLocationMessage}= require('./utils/messages')
+const {addUser, removeUser,getUser,getUserInRoom}= require('./utils/users')
 
 
 
@@ -19,14 +20,23 @@ app.use(express.static(publicDictoryPath))
 
 
 io.on('connection',(socket)=>{
-	console.log("New Socket Connection")
+	console.log("New WebSocket Connection")
+	
 
+	socket.on('join',({username,room},callback)=>{ 
 
-	socket.on('join',({username,room})=>{
+		const{ error,user}= addUser({id:socket.id,username,room})
+	
+		if(error){
+			return callback(error)
+		}
 
-		socket.join(room)
-		socket.emit('message',generateMessage("Welcome !!"))
-		socket.broadcast.to(room).emit('message',generateMessage(`${username} Has Joined!`))
+		socket.join(user.room)
+
+		socket.emit('message',generateMessage("FROM ADMIN","Welcome !!"))
+		socket.broadcast.to(user.room).emit('message',generateMessage("FROM ADMIN",`${user.username} Has Joined!`))
+
+		callback()
 
 	})
 
@@ -34,28 +44,35 @@ io.on('connection',(socket)=>{
 
 	socket.on('sendMessage',(message,callback)=>{
 
+		const user=getUser(socket.id)
 		const filter = new Filter()
 
 		if(filter.isProfane(message)){
 			return callback("Profanity Not Allowed!")
 		}
 
-		io.emit('message',generateMessage(message))
+		io.to(user.room).emit('message',generateMessage(user.username,message))
 		callback()
 	})
 
 
 
 	socket.on('sendLocation',(coords,callback)=>{
+		const user=getUser(socket.id)
 		const url=`https://google.com/maps?q=${coords.latitude},${coords.longitude}`
-		io.emit('locationMessage',generateLocationMessage(url))
+		io.to(user.room).emit('locationMessage',generateLocationMessage(user.username,url))
 		callback()
 	})
 
 
 
 	socket.on('disconnect',()=>{
-		io.emit('message',generateMessage("A User Has Left"))
+		const user =removeUser(socket.id)
+
+		if(user){
+			io.to(user.room).emit('message',generateMessage("FROM ADMIN",`${user.username} Has Left!`))
+		}
+
 	})
 
 })
