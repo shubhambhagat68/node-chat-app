@@ -4,7 +4,7 @@ const express= require('express')
 const socketio= require('socket.io')
 const Filter= require('bad-words')
 const {generateMessage,generateLocationMessage}= require('./utils/messages')
-const {addUser, removeUser,getUser,getUserInRoom}= require('./utils/users')
+const {addUser, removeUser,getUser,getUsersInRoom}= require('./utils/users')
 
 
 
@@ -33,8 +33,12 @@ io.on('connection',(socket)=>{
 
 		socket.join(user.room)
 
-		socket.emit('message',generateMessage("FROM ADMIN","Welcome !!"))
-		socket.broadcast.to(user.room).emit('message',generateMessage("FROM ADMIN",`${user.username} Has Joined!`))
+		socket.emit('message',generateMessage("Admin","Welcome !!"))
+		socket.broadcast.to(user.room).emit('message',generateMessage("Amin",`${user.username} Has Joined!`))
+		io.to(user.room).emit('roomData',{
+				room: user.room,
+				users:getUsersInRoom(user.room)
+			})
 
 		callback()
 
@@ -70,7 +74,11 @@ io.on('connection',(socket)=>{
 		const user =removeUser(socket.id)
 
 		if(user){
-			io.to(user.room).emit('message',generateMessage("FROM ADMIN",`${user.username} Has Left!`))
+			io.to(user.room).emit('message',generateMessage("Admin",`${user.username} Has Left!`))
+			io.to(user.room).emit('roomData',{
+				room: user.room,
+				users:getUsersInRoom(user.room)
+			})
 		}
 
 	})

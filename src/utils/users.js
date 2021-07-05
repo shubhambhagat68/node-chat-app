@@ -59,7 +59,7 @@ const getUser=(id)=>{
 //Get All User In a Room
 const getUsersInRoom=(room)=>{
 	room=room.trim().toLowerCase()
-	 return users.filter((user)=>user.room===room)
+	return users.filter((user)=>user.room===room)
 
 }
 
