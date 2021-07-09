@@ -8,7 +8,6 @@ const generateMessage = (username,text)=>{
 
 }
 
-
 const generateLocationMessage=(username,url)=>{
 
 	return {

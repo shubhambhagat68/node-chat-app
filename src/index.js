@@ -7,7 +7,6 @@ const {generateMessage,generateLocationMessage}= require('./utils/messages')
 const {addUser, removeUser,getUser,getUsersInRoom}= require('./utils/users')
 
 
-
 const app = express()
 const server = http.createServer(app)
 const io= socketio(server)
@@ -18,12 +17,10 @@ const publicDictoryPath= path.join(__dirname,'../public')
 
 app.use(express.static(publicDictoryPath))
 
-
 io.on('connection',(socket)=>{
 	console.log("New WebSocket Connection")
 	
-
-	socket.on('join',({username,room},callback)=>{ 
+	socket.on('join',({username,room},callback)=>{  
 
 		const{ error,user}= addUser({id:socket.id,username,room})
 	
@@ -45,7 +42,6 @@ io.on('connection',(socket)=>{
 	})
 
 
-
 	socket.on('sendMessage',(message,callback)=>{
 
 		const user=getUser(socket.id)
@@ -60,14 +56,12 @@ io.on('connection',(socket)=>{
 	})
 
 
-
 	socket.on('sendLocation',(coords,callback)=>{
 		const user=getUser(socket.id)
 		const url=`https://google.com/maps?q=${coords.latitude},${coords.longitude}`
 		io.to(user.room).emit('locationMessage',generateLocationMessage(user.username,url))
 		callback()
 	})
-
 
 
 	socket.on('disconnect',()=>{

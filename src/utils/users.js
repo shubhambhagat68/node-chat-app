@@ -32,9 +32,7 @@ const addUser= ({id,username,room})=>{
 	users.push(user)
 	return {user}
 
-
 }
-
 
 //Remove User
 const removeUser= (id)=>{
@@ -44,7 +42,6 @@ const removeUser= (id)=>{
 	if(index!=-1){
 		return users.splice(index,1)[0]
 	}
-
 
 }
 
